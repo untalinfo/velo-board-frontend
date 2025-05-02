@@ -1,6 +1,7 @@
 import React from 'react';
 import './Column.scss';
 import { ADD_ICON, MORE_ICON } from '../../../../../shared/application/constants/icons';
+import Card from '../Card';
 
 const Column = () => {
 	return (
@@ -12,6 +13,9 @@ const Column = () => {
 				</div>
 				<i className={MORE_ICON}></i>
 			</header>
+			<div>
+				<Card />
+			</div>
 			<div className="add-card-container">
 				<i className={ADD_ICON}></i>
 				<p>Add card</p>
