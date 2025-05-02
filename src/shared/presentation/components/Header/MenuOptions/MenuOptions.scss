@@ -1,0 +1,21 @@
+@import '../../../../application/theme/colors.scss';
+
+.options-container {
+	@extend .bg-tertiary;
+	@extend .border-neutral;
+	display: flex;
+	flex-direction: column;
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 10px;
+	gap: 6px;
+	position: absolute;
+	padding: 10px;
+	top: 35px;
+	right: 0;
+	width: 144px;
+
+	> .option {
+		cursor: pointer;
+	}
+}

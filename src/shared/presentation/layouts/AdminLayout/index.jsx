@@ -1,9 +1,15 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import './AdminLayout.scss';
+import Header from '../../components/Header';
 
 const AdminLayout = ({ children }) => {
-	return <div>{children}</div>;
+	return (
+		<div>
+			<Header />
+			{children}
+		</div>
+	);
 };
 
 AdminLayout.propTypes = {
