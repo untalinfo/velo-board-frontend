@@ -1,0 +1,71 @@
+@import '../../../application/theme/colors.scss';
+
+.contianer-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 24px 24px;
+	width: 100%;
+
+	> .img-logo {
+		width: 150px;
+		height: auto;
+	}
+
+	> .right-section-container {
+		@include centered-flex;
+		column-gap: 20px;
+
+		> .notifications-container {
+			@include centered-flex;
+			column-gap: 12px;
+
+			> .icon-notification {
+				@extend .color-error;
+			}
+		}
+
+		> .search-profile-contianer {
+			@include centered-flex;
+			@extend .bg-secondary;
+			justify-content: space-between;
+			border-radius: 20px;
+			padding: 14px 10px;
+			height: 50px;
+			width: 420px;
+
+			> .search-input-container,
+			> .user-options-container {
+				@extend .bg-tertiary;
+				@extend .border-neutral;
+				border-style: solid;
+				border-width: 1px;
+				border-radius: 10px;
+				display: flex;
+				align-items: center;
+				column-gap: 8px;
+				height: 29px;
+				padding: 8px;
+			}
+
+			> .search-input-container {
+				> .input {
+					color: $fontColor;
+					background: none;
+				}
+			}
+
+			> .user-options-container {
+				position: relative;
+				> .user-wrapper {
+					@include centered-flex;
+					gap: 6px;
+				}
+
+				> .icon-options {
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}

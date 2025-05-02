@@ -56,6 +56,7 @@
 	$colorsList: (
 		'primary': $primary,
 		'secondary': $secondary,
+		'tertiary': $tertiary,
 		'success': $success,
 		'warning': $warning,
 		'error': $error,
@@ -77,4 +78,10 @@
 
 		@include shade-value($name, $colorName, $property, $colorVariable);
 	}
+}
+
+@mixin centered-flex {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }

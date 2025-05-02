@@ -12,7 +12,7 @@ const exampleRouter = {
 			path: exampleRoute,
 			page: ExamplePage,
 			routeComponent: UnauthenticatedRoute,
-			layout: ({ children }) => <>{children}</>, // Optional param to custom layout
+			// layout: ({ children }) => <>{children}</>, // Optional param to custom layout
 		},
 		{
 			path: exampleRoutePublic,
