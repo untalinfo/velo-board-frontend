@@ -1,24 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './Card.scss';
 import { ADD_ICON, PENCIL_ICON, TRASH_ICON } from '../../../../../shared/application/constants/icons';
 
-const Card = () => {
+const Card = ({ card }) => {
 	return (
 		<section className="container-card">
 			<header className="header-card-container">
-				<h2>title card</h2>
+				<h3>{card?.title}</h3>
 			</header>
 			<div className="tags-contianer">
-				<div className="tag-wrapper">
-					<p>Design</p>
-				</div>
+				{card?.tags?.map((tag) => (
+					<div key={tag} className="tag-wrapper">
+						<p>{tag}</p>
+					</div>
+				))}
 				<div className="add-tag">
 					<i className={ADD_ICON}></i>
 					<p>Tag</p>
 				</div>
 			</div>
 			<div className="body-card">
-				<p>Development task assign for the product page in task it project.</p>
+				<p>{card?.description}</p>
 			</div>
 			<footer className="footer-card">
 				<i className={PENCIL_ICON}></i>
@@ -26,6 +29,15 @@ const Card = () => {
 			</footer>
 		</section>
 	);
+};
+
+Card.propTypes = {
+	card: PropTypes.shape({
+		_id: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
+		description: PropTypes.string,
+		tags: PropTypes.arrayOf(PropTypes.string),
+	}),
 };
 
 export default Card;

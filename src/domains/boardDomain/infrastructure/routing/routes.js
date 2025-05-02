@@ -1,3 +1,3 @@
-export const boardRoute = `/board`;
+export const boardRoute = `/`;
 
 export default { boardRoute };

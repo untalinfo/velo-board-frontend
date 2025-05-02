@@ -9,6 +9,7 @@
 	padding: 25px 10px;
 	row-gap: 18px;
 	width: 254px;
+	height: max-content;
 
 	> .header-card-container {
 		display: flex;
@@ -28,6 +29,13 @@
 				height: 12px;
 			}
 		}
+	}
+
+	> .cards-container {
+		display: flex;
+		flex-direction: column;
+		row-gap: 10px;
+		width: 100%;
 	}
 
 	> .add-card-container {
