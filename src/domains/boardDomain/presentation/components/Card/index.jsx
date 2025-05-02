@@ -1,6 +1,6 @@
 import React from 'react';
 import './Card.scss';
-import { ADD_ICON, TRASH_ICON } from '../../../../../shared/application/constants/icons';
+import { ADD_ICON, PENCIL_ICON, TRASH_ICON } from '../../../../../shared/application/constants/icons';
 
 const Card = () => {
 	return (
@@ -21,6 +21,7 @@ const Card = () => {
 				<p>Development task assign for the product page in task it project.</p>
 			</div>
 			<footer className="footer-card">
+				<i className={PENCIL_ICON}></i>
 				<i className={TRASH_ICON}></i>
 			</footer>
 		</section>

@@ -4,3 +4,5 @@ export const ARROW_DOWN = 'ri-arrow-down-s-line';
 export const TRASH_ICON = 'ri-delete-bin-line';
 export const MORE_ICON = 'ri-more-fill';
 export const ADD_ICON = 'ri-add-line';
+export const PENCIL_ICON = 'ri-pencil-line';
+export const CLOSE_ICON = 'ri-close-circle-line';

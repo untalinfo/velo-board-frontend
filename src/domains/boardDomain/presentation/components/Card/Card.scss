@@ -33,6 +33,8 @@
 	}
 
 	> .footer-card {
+		display: flex;
 		align-self: flex-end;
+		column-gap: 8px;
 	}
 }
