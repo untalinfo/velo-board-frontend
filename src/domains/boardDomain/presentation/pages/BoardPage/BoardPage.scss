@@ -1,0 +1,25 @@
+@import '../../../../../shared/application/theme/colors.scss';
+
+.container-board {
+	display: flex;
+	flex-direction: column;
+	padding: 24px 32px;
+	gap: 24px;
+
+	> .columns-container {
+		display: flex;
+		gap: 24px;
+
+		> .add-new-list-contianer {
+			@extend .bg-secondary;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			border-radius: 50px;
+			padding: 20px 24px;
+			width: 252px;
+			max-height: 50px;
+		}
+	}
+}

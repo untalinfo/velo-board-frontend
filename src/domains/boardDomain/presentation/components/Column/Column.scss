@@ -1,0 +1,47 @@
+@import '../../../../../shared/application/theme/colors.scss';
+
+.container-column {
+	@extend .bg-secondary;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border-radius: 20px;
+	padding: 25px 10px;
+	row-gap: 18px;
+	width: 254px;
+
+	> .header-card-container {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 6px;
+		width: 100%;
+
+		> .left-container {
+			display: flex;
+			align-items: center;
+			column-gap: 10px;
+
+			> .identifier {
+				background-color: red;
+				border-radius: 50%;
+				width: 12px;
+				height: 12px;
+			}
+		}
+	}
+
+	> .add-card-container {
+		@extend .border-white;
+		border-width: 2px;
+		border-style: dashed;
+		border-radius: 20px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		column-gap: 10px;
+		margin-top: 10px;
+		padding: 8px 0;
+		width: 100%;
+	}
+}
