@@ -1,26 +1,47 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import Modal from '../../../../../shared/presentation/components/Modal';
 import './FormCard.scss';
+import { getBoardSelector } from '../../../application/selectors/board';
+import { postCreateCard, putUpdateCard } from '../../../application/slices/cards';
 
-const FormCard = ({ isEdit = false, defaultValues = {}, onSave }) => {
+const FormCard = ({ isEdit = false, defaultValues = {}, isOpen, onClose, columnId, cardId }) => {
+	const boardId = useSelector(getBoardSelector);
+	const dispatch = useDispatch();
+	const defaultFormValues = {
+		...defaultValues,
+		tags: defaultValues?.tags?.join(', ') || '',
+	};
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
-	} = useForm({ defaultValues, mode: 'onChange' });
+		formState: { errors, isDirty },
+	} = useForm({ defaultValues: defaultFormValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
-		const formattedData = {
-			...data,
-			tags: data.tags.split(',').map((tag) => tag.trim()),
-		};
-		onSave(formattedData);
+		if (isEdit) {
+			const formattedData = {
+				...data,
+				tags: data.tags.split(',').map((tag) => tag.trim()),
+			};
+			dispatch(putUpdateCard({ formattedData, cardId }));
+			onClose();
+		} else {
+			const formattedData = {
+				...data,
+				tags: data.tags.split(',').map((tag) => tag.trim()),
+				columnId,
+				boardId: boardId?._id,
+			};
+			dispatch(postCreateCard(formattedData));
+			onClose();
+		}
 	};
 
 	return (
-		<Modal isOpen={true}>
+		<Modal isOpen={isOpen} onClose={onClose}>
 			<form onSubmit={handleSubmit(onSubmit)} className="form-card-container">
 				<div className="form-group">
 					<input
@@ -60,7 +81,7 @@ const FormCard = ({ isEdit = false, defaultValues = {}, onSave }) => {
 					{errors.tags && <span className="error">{errors.tags.message}</span>}
 				</div>
 
-				<button type="submit" className="btn-save">
+				<button type="submit" className="btn-save" disabled={!isDirty}>
 					{isEdit ? 'Edit' : 'Save'}
 				</button>
 			</form>
@@ -70,7 +91,10 @@ const FormCard = ({ isEdit = false, defaultValues = {}, onSave }) => {
 FormCard.propTypes = {
 	isEdit: PropTypes.bool,
 	defaultValues: PropTypes.object,
-	onSave: PropTypes.func.isRequired,
+	isOpen: PropTypes.bool.isRequired,
+	onClose: PropTypes.func.isRequired,
+	columnId: PropTypes.string,
+	cardId: PropTypes.string,
 };
 
 export default FormCard;

@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import './Card.scss';
 import { ADD_ICON, PENCIL_ICON, TRASH_ICON } from '../../../../../shared/application/constants/icons';
+import { deleteCard } from '../../../application/slices/cards';
+import FormCard from '../FormCard';
 
 const Card = ({ card }) => {
+	const dispatch = useDispatch();
+	const [showModalEdit, setshowModalEdit] = useState(false);
+	const defaultValues = {
+		title: card?.title,
+		description: card?.description,
+		tags: card?.tags,
+	};
+
+	const handleDeleteCard = () => {
+		dispatch(deleteCard(card?._id));
+	};
+	const handleShowModalEdit = () => {
+		setshowModalEdit(!showModalEdit);
+	};
 	return (
 		<section className="container-card">
 			<header className="header-card-container">
@@ -15,7 +32,7 @@ const Card = ({ card }) => {
 						<p>{tag}</p>
 					</div>
 				))}
-				<div className="add-tag">
+				<div className="add-tag" onClick={handleShowModalEdit}>
 					<i className={ADD_ICON}></i>
 					<p>Tag</p>
 				</div>
@@ -24,9 +41,16 @@ const Card = ({ card }) => {
 				<p>{card?.description}</p>
 			</div>
 			<footer className="footer-card">
-				<i className={PENCIL_ICON}></i>
-				<i className={TRASH_ICON}></i>
+				<i className={`${PENCIL_ICON} icon`} onClick={handleShowModalEdit}></i>
+				<i className={`${TRASH_ICON} icon`} onClick={handleDeleteCard}></i>
 			</footer>
+			<FormCard
+				isOpen={showModalEdit}
+				onClose={handleShowModalEdit}
+				defaultValues={defaultValues}
+				isEdit={true}
+				cardId={card?._id}
+			/>
 		</section>
 	);
 };

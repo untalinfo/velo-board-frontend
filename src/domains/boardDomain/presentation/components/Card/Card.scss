@@ -13,6 +13,8 @@
 	> .tags-contianer {
 		display: flex;
 		gap: 5px;
+		width: 100%;
+		flex-wrap: wrap;
 
 		> .tag-wrapper {
 			@include centered-flex;
@@ -36,5 +38,14 @@
 		display: flex;
 		align-self: flex-end;
 		column-gap: 8px;
+
+		> .icon {
+			cursor: pointer;
+			transition: all 0.2s ease-in-out;
+
+			&:hover {
+				opacity: 0.5;
+			}
+		}
 	}
 }
