@@ -5,7 +5,7 @@ import { ADD_ICON } from '../../../../../shared/application/constants/icons';
 import Column from '../../components/Column/indes';
 import { getBoard } from '../../../application/slices/board';
 import { getBoardSelector } from '../../../application/selectors/board';
-import { getColumnsByBoard } from '../../../application/slices/columns';
+import { getColumnsByBoard, postCreateColumn } from '../../../application/slices/columns';
 import { getColumnsByBoardSelector } from '../../../application/selectors/columns';
 import { getCardsByBoard } from '../../../application/slices/cards';
 
@@ -13,7 +13,6 @@ const BoardPage = () => {
 	const dispatch = useDispatch();
 	const boardData = useSelector(getBoardSelector);
 	const columnsData = useSelector(getColumnsByBoardSelector);
-	const sortColumns = [...(columnsData || [])].sort((a, b) => a.position - b.position);
 
 	useEffect(() => {
 		dispatch(getBoard());
@@ -25,6 +24,13 @@ const BoardPage = () => {
 		}
 	}, [dispatch, boardData._id]);
 
+	const handleNewList = () => {
+		const newColumn = {
+			boardId: boardData?._id,
+		};
+		dispatch(postCreateColumn(newColumn));
+	};
+
 	return (
 		<main className="container-board">
 			<header>
@@ -33,10 +39,10 @@ const BoardPage = () => {
 			</header>
 
 			<section className="columns-container">
-				{sortColumns?.map((column) => (
+				{columnsData?.map((column) => (
 					<Column key={column._id} column={column} />
 				))}
-				<div className="add-new-list-contianer">
+				<div className="add-new-list-contianer" onClick={handleNewList}>
 					<i className={ADD_ICON}></i>
 					<p>Add new list</p>
 				</div>
