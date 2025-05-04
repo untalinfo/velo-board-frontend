@@ -1,0 +1,51 @@
+@import '../../../../../shared/application/theme/colors.scss';
+
+.container-card {
+	@extend .bg-tertiary;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	border-radius: 10px;
+	padding: 18px 14px;
+	row-gap: 15px;
+	width: 100%;
+
+	> .tags-contianer {
+		display: flex;
+		gap: 5px;
+		width: 100%;
+		flex-wrap: wrap;
+
+		> .tag-wrapper {
+			@include centered-flex;
+			@extend .bg-success;
+			border-radius: 20px;
+			max-height: 22px;
+			padding: 4px 15px;
+		}
+
+		> .add-tag {
+			@include centered-flex;
+			background-color: #4e4e53;
+			border-radius: 20px;
+			cursor: pointer;
+			max-height: 22px;
+			padding: 4px 15px;
+		}
+	}
+
+	> .footer-card {
+		display: flex;
+		align-self: flex-end;
+		column-gap: 8px;
+
+		> .icon {
+			cursor: pointer;
+			transition: all 0.2s ease-in-out;
+
+			&:hover {
+				opacity: 0.5;
+			}
+		}
+	}
+}

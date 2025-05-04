@@ -5,12 +5,28 @@ import MenuOptions from './MenuOptions';
 
 const Header = () => {
 	const [showOptions, setShowOptions] = useState(false);
+	const [isScrolled, setIsScrolled] = useState(false);
 
+	const handleScroll = () => {
+		if (window.scrollY > 0) {
+			setIsScrolled(true);
+		} else {
+			setIsScrolled(false);
+		}
+	};
+
+	React.useEffect(() => {
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
 	const handleShowOptions = () => {
 		setShowOptions(!showOptions);
 	};
+
 	return (
-		<header className="contianer-header">
+		<header className={`contianer-header ${isScrolled ? 'scrolled' : ''}`}>
 			<img src="/assets/velo-logo.png" className="img-logo" alt="" />
 			<section className="right-section-container">
 				<div className="notifications-container">
