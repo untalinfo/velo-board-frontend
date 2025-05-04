@@ -1,11 +1,20 @@
 @import '../../../application/theme/colors.scss';
 
 .contianer-header {
+	@extend .bg-primary;
+	transition: box-shadow 0.3s ease;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 24px 24px;
 	width: 100%;
+	position: fixed;
+	top: 0;
+	z-index: 10;
+
+	&.scrolled {
+		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+	}
 
 	> .img-logo {
 		width: 150px;

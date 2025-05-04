@@ -33,9 +33,9 @@ const BoardPage = () => {
 
 	return (
 		<main className="container-board">
-			<header>
-				<h1>{boardData?.title}</h1>
-				<p>{boardData?.description}</p>
+			<header className="header-board">
+				<h1 className="title">{boardData?.title}</h1>
+				<p className="description">{boardData?.description}</p>
 			</header>
 
 			<section className="columns-container">
