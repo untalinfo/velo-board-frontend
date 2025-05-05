@@ -3,6 +3,7 @@ import example, { initialState as exampleInitial } from '../../../domains/exampl
 import board from '../../../domains/boardDomain/application/slices/board';
 import columns from '../../../domains/boardDomain/application/slices/columns';
 import cards from '../../../domains/boardDomain/application/slices/cards';
+import notifications from '../slices/notifications';
 
 export const initialStates = {
 	example: exampleInitial,
@@ -13,4 +14,5 @@ export default combineReducers({
 	board,
 	columns,
 	cards,
+	notifications,
 });
