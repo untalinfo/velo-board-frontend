@@ -6,6 +6,7 @@ import {
 	urlGetColumnsByBoardId,
 	urlPostNewCard,
 	urlPostNewColumn,
+	urlPutMoveColumn,
 	urlPutUpdateCard,
 	urlPutUpdateColumn,
 } from './backendUrls';
@@ -54,6 +55,15 @@ export const putUpdateColumnRequest = (columnId, data) => {
 		body: JSON.stringify(data),
 	};
 	return fetch(urlPutUpdateColumn(columnId), requestOptions).then((response) => response.json());
+};
+
+export const putMoveColumnRequest = (columnId, data) => {
+	const requestOptions = {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data),
+	};
+	return fetch(urlPutMoveColumn(columnId), requestOptions).then((response) => response.json());
 };
 
 export const postNewCardRequest = (data) => {
