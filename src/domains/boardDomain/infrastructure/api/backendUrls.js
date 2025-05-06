@@ -12,5 +12,6 @@ export const urlPutMoveColumn = (columnId) => `${urlBase}columns/${columnId}/mov
 export const urlPostNewCard = () => `${urlBase}cards`;
 export const urlDeleteCard = (cardId) => `${urlBase}cards/${cardId}`;
 export const urlPutUpdateCard = (cardId) => `${urlBase}cards/${cardId}`;
+export const urlPutMoveCard = (cardId) => `${urlBase}cards/${cardId}/move`;
 
 export default { urlGetBoard };

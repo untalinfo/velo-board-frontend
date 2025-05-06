@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDragAndDrop } from '@formkit/drag-and-drop/react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import './Column.scss';
@@ -8,6 +9,7 @@ import { getCardsByColumnSelector } from '../../../application/selectors/cards';
 import { deleteColumn } from '../../../application/slices/columns';
 import { putUpdateColumnRequest } from '../../../infrastructure/api';
 import FormCard from '../FormCard';
+import { putMoveCard } from '../../../application/slices/cards';
 
 const Column = ({ column }) => {
 	const dispatch = useDispatch();
@@ -16,6 +18,7 @@ const Column = ({ column }) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [name, setName] = useState(`${column.title}`);
 	const [showModalCreateCard, setShowModalCreateCard] = useState(false);
+	const cardsDataIds = cardsData.map((card) => card._id);
 
 	const handleShowOptions = () => {
 		setshowOptionsColumn(!showOptionsColumn);
@@ -28,20 +31,42 @@ const Column = ({ column }) => {
 
 	const handleNameChange = async () => {
 		setIsEditing(false);
-		// const updatedTier =
 		const data = { title: name };
 		await putUpdateColumnRequest(column?._id, data);
-		// if (updatedTier) {
-		// 	toast.success('Tier name updated successfully');
-		// } else {
-		// 	toast.error('Failed to update tier name, duplicate name found');
-		// 	setName(tier.name);
-		// }
 	};
 
 	const handleShowModalCreateCard = () => {
 		setShowModalCreateCard(!showModalCreateCard);
 	};
+
+	// --- Drag and Drop Setup ---
+	const handleCardDragEnd = (payload) => {
+		const { initialIndex, targetIndex } = payload;
+		// Si no hay cambios en el índice, no hacemos nada
+		if (initialIndex === targetIndex) {
+			console.log('No changes in card order.');
+			return;
+		}
+		// Aquí puedes manejar el cambio de orden de las tarjetas
+		const findCard = cardsData.find((card) => card.position === initialIndex);
+		console.log('findCard', findCard);
+		const formattedData = {
+			newPosition: targetIndex,
+			targetColumnId: column?._id,
+		};
+		dispatch(putMoveCard({ formattedData, cardId: findCard?._id }));
+	};
+
+	const [parentRef, orderedCards, setOrderedCards] = useDragAndDrop([], {
+		group: 'cardsGroup',
+		handleEnd: handleCardDragEnd,
+	});
+	// --- Fin Drag and Drop Setup ---
+	useEffect(() => {
+		if (cardsDataIds?.length > 0 && JSON.stringify(orderedCards) !== JSON.stringify(cardsDataIds)) {
+			setOrderedCards(cardsDataIds);
+		}
+	}, [cardsDataIds, orderedCards, setOrderedCards]);
 
 	return (
 		<section className="container-column">
@@ -78,10 +103,16 @@ const Column = ({ column }) => {
 					)}
 				</div>
 			</header>
-			<div className="cards-container">
-				{cardsData?.map((card) => (
-					<Card key={card._id} card={card} />
-				))}
+			<div className="cards-container" ref={parentRef}>
+				{orderedCards?.map((card) => {
+					const cardData = cardsData.find((c) => c._id === card);
+					if (!cardData) return null;
+					return (
+						<div key={cardData._id} data-label={cardData?._id}>
+							<Card card={cardData} />
+						</div>
+					);
+				})}
 			</div>
 			<div className="add-card-container" onClick={handleShowModalCreateCard}>
 				<i className={ADD_ICON}></i>

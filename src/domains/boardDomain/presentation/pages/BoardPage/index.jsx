@@ -27,13 +27,15 @@ const BoardPage = () => {
 		}
 		// Aquí puedes manejar el cambio de orden de las columnas
 		const findColumn = columnsData.find((col) => col.position === initialIndex);
-		dispatch(
-			putMoveColumn({
-				columnId: findColumn?._id,
-				newPosition: targetIndex,
-				boardId: boardData?._id,
-			}),
-		);
+		if (findColumn) {
+			dispatch(
+				putMoveColumn({
+					columnId: findColumn?._id,
+					newPosition: targetIndex,
+					boardId: boardData?._id,
+				}),
+			);
+		}
 	};
 
 	const [parentRef, orderedColumns, setOrderedColumns] = useDragAndDrop([], {
@@ -82,7 +84,7 @@ const BoardPage = () => {
 						const column = columnsData.find((col) => col._id === columnId);
 						if (!column) return null;
 						return (
-							<div key={columnId} className="column-draggable" data-label={columnId}>
+							<div key={column?._id} className="column-draggable" data-label={column?._id}>
 								<Column column={column} />
 							</div>
 						);
