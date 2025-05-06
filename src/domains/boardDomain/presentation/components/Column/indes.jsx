@@ -3,7 +3,13 @@ import { useDragAndDrop } from '@formkit/drag-and-drop/react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import './Column.scss';
-import { ADD_ICON, MORE_ICON, PENCIL_ICON, TRASH_ICON } from '../../../../../shared/application/constants/icons';
+import {
+	ADD_ICON,
+	DRAG_ICON,
+	MORE_ICON,
+	PENCIL_ICON,
+	TRASH_ICON,
+} from '../../../../../shared/application/constants/icons';
 import Card from '../Card';
 import { getCardsByColumnSelector } from '../../../application/selectors/cards';
 import { deleteColumn } from '../../../application/slices/columns';
@@ -72,6 +78,7 @@ const Column = ({ column }) => {
 		<section className="container-column">
 			<header className="header-card-container">
 				<div className="left-container">
+					<i className={`kanban-handle ${DRAG_ICON}`}></i>
 					<div className="identifier" />
 					{isEditing ? (
 						<input

@@ -6,3 +6,4 @@ export const MORE_ICON = 'ri-more-fill';
 export const ADD_ICON = 'ri-add-line';
 export const PENCIL_ICON = 'ri-pencil-line';
 export const CLOSE_ICON = 'ri-close-circle-line';
+export const DRAG_ICON = 'ri-drag-move-fill';

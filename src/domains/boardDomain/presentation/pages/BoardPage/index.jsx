@@ -41,6 +41,7 @@ const BoardPage = () => {
 	const [parentRef, orderedColumns, setOrderedColumns] = useDragAndDrop([], {
 		group: 'columnsGroup',
 		handleEnd: handleColumnDragEnd,
+		dragHandle: '.kanban-handle',
 	});
 	// --- Fin Drag and Drop Setup ---
 

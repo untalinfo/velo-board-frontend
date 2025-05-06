@@ -23,6 +23,15 @@
 			align-items: center;
 			column-gap: 10px;
 
+			> .kanban-handle {
+				cursor: grab;
+				transition: all 0.2s ease-in-out;
+
+				&:hover {
+					opacity: 0.8;
+				}
+			}
+
 			> .identifier {
 				background-color: red;
 				border-radius: 50%;
