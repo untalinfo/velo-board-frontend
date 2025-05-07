@@ -126,11 +126,13 @@ const Column = ({ columnId }) => {
 				<i className={ADD_ICON}></i>
 				<p>Add card</p>
 			</div>
-			<FormCard
-				isOpen={showModalCreateCard}
-				onClose={() => setShowModalCreateCard(!showModalCreateCard)}
-				columnId={columnId}
-			/>
+			{showModalCreateCard && (
+				<FormCard
+					isOpen={showModalCreateCard}
+					onClose={() => setShowModalCreateCard(!showModalCreateCard)}
+					columnId={columnId}
+				/>
+			)}
 		</section>
 	);
 };
