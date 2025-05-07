@@ -3,6 +3,7 @@ import {
 	deleteCardRequest,
 	getCardsByBoardRequest,
 	postNewCardRequest,
+	putMoveCardRequest,
 	putUpdateCardRequest,
 } from '../../infrastructure/api';
 
@@ -44,6 +45,18 @@ export const putUpdateCard = createAsyncThunk(
 	async ({ formattedData, cardId }, { rejectWithValue }) => {
 		try {
 			const response = await putUpdateCardRequest(formattedData, cardId);
+			return response;
+		} catch (error) {
+			return rejectWithValue(error);
+		}
+	},
+);
+
+export const putMoveCard = createAsyncThunk(
+	'cards/moveCard',
+	async ({ formattedData, cardId }, { rejectWithValue }) => {
+		try {
+			const response = await putMoveCardRequest(formattedData, cardId);
 			return response;
 		} catch (error) {
 			return rejectWithValue(error);
@@ -96,6 +109,41 @@ const Cards = createSlice({
 			if (index !== -1) {
 				state.cardsArray[index] = payload;
 			}
+		},
+		[putMoveCard.pending]: (state) => {
+			state.error = null;
+		},
+		[putMoveCard.rejected]: (state, { payload }) => {
+			state.error = payload;
+		},
+		[putMoveCard.fulfilled]: (state, { payload }) => {
+			state.response = payload;
+			const movedCardId = payload._id;
+			const newColumnId = payload.columnId;
+			const newPosition = payload.position;
+
+			// Eliminar la tarjeta original
+			const cardIndex = state.cardsArray.findIndex((card) => card._id === movedCardId);
+			if (cardIndex === -1) return;
+
+			const movedCard = { ...state.cardsArray[cardIndex], ...payload };
+			state.cardsArray.splice(cardIndex, 1); // quita del array global
+
+			// Filtrar las tarjetas de la columna destino
+			const cardsInTargetColumn = state.cardsArray
+				.filter((card) => card.columnId === newColumnId)
+				.sort((a, b) => a.position - b.position);
+
+			// Insertar la tarjeta movida en la posición deseada
+			cardsInTargetColumn.splice(newPosition, 0, movedCard);
+
+			// Recalcular posición de todas las tarjetas en la columna destino
+			cardsInTargetColumn.forEach((card, index) => {
+				card.position = index;
+			});
+
+			// Actualizar el array global: eliminar todas las tarjetas de la columna destino y reemplazarlas por las nuevas
+			state.cardsArray = [...state.cardsArray.filter((card) => card.columnId !== newColumnId), ...cardsInTargetColumn];
 		},
 	},
 });

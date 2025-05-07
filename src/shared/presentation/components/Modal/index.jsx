@@ -37,7 +37,7 @@ const Modal = ({
 	const styles = {
 		overlay: {
 			backgroundColor: 'rgba(0, 0, 0, 0.7)',
-			zIndex: 10,
+			zIndex: 10000,
 			...overlayStyle,
 		},
 		content: {

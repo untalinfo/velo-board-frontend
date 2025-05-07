@@ -20,6 +20,12 @@
 	> .columns-container {
 		display: flex;
 		gap: 24px;
+		width: 100%;
+
+		> .column-wrapper {
+			display: flex;
+			gap: 24px;
+		}
 
 		> .add-new-list-contianer {
 			@extend .bg-secondary;

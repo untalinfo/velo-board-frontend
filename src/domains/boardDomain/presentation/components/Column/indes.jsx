@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDragAndDrop } from '@formkit/drag-and-drop/react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import './Column.scss';
-import { ADD_ICON, MORE_ICON, PENCIL_ICON, TRASH_ICON } from '../../../../../shared/application/constants/icons';
+import {
+	ADD_ICON,
+	DRAG_ICON,
+	MORE_ICON,
+	PENCIL_ICON,
+	TRASH_ICON,
+} from '../../../../../shared/application/constants/icons';
 import Card from '../Card';
 import { getCardsByColumnSelector } from '../../../application/selectors/cards';
 import { deleteColumn } from '../../../application/slices/columns';
 import { putUpdateColumnRequest } from '../../../infrastructure/api';
 import FormCard from '../FormCard';
+import { putMoveCard } from '../../../application/slices/cards';
+import { getColumnByIdSelector } from '../../../application/selectors/columns';
 
-const Column = ({ column }) => {
+const Column = ({ columnId }) => {
 	const dispatch = useDispatch();
-	const cardsData = useSelector(getCardsByColumnSelector(column?._id));
+	const column = useSelector(getColumnByIdSelector(columnId));
+	const cardsFromSelector = useSelector(getCardsByColumnSelector(columnId));
+	const cards = React.useMemo(() => cardsFromSelector || [], [cardsFromSelector]);
+	const cardsData = React.useMemo(() => cards, [cards]);
 	const [showOptionsColumn, setshowOptionsColumn] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
-	const [name, setName] = useState(`${column.title}`);
+	const [name, setName] = useState(`${column?.title}`);
 	const [showModalCreateCard, setShowModalCreateCard] = useState(false);
 
 	const handleShowOptions = () => {
@@ -22,31 +34,53 @@ const Column = ({ column }) => {
 	};
 
 	const handleDeleteColumn = () => {
-		dispatch(deleteColumn(column?._id));
+		dispatch(deleteColumn(columnId));
 		setshowOptionsColumn(false);
 	};
 
 	const handleNameChange = async () => {
 		setIsEditing(false);
-		// const updatedTier =
 		const data = { title: name };
-		await putUpdateColumnRequest(column?._id, data);
-		// if (updatedTier) {
-		// 	toast.success('Tier name updated successfully');
-		// } else {
-		// 	toast.error('Failed to update tier name, duplicate name found');
-		// 	setName(tier.name);
-		// }
+		await putUpdateColumnRequest(columnId, data);
 	};
 
 	const handleShowModalCreateCard = () => {
 		setShowModalCreateCard(!showModalCreateCard);
 	};
 
+	// --- Drag and Drop Setup ---
+	const handleCardDragEnd = (payload) => {
+		const { initialIndex, targetIndex } = payload;
+		// Si no hay cambios en el índice, no hacemos nada
+		if (initialIndex === targetIndex) {
+			console.log('No changes in card order.');
+			return;
+		}
+		// Manejar el cambio de orden de las tarjetas
+		const findCard = cardsData.find((card) => card.position === initialIndex);
+		const formattedData = {
+			newPosition: targetIndex,
+			targetColumnId: columnId,
+		};
+		dispatch(putMoveCard({ formattedData, cardId: findCard?._id }));
+	};
+
+	const [cardListRef, orderedCards, setOrderedCards] = useDragAndDrop(cardsData, {
+		group: 'sharedCardsGroup',
+		handleEnd: handleCardDragEnd,
+	});
+	// --- Fin Drag and Drop Setup ---
+	useEffect(() => {
+		if (cardsData && JSON.stringify(orderedCards) !== JSON.stringify(cardsData)) {
+			setOrderedCards(cardsData);
+		}
+	}, [cardsData, orderedCards, setOrderedCards]);
+
 	return (
 		<section className="container-column">
 			<header className="header-card-container">
 				<div className="left-container">
+					<i className={`kanban-handle ${DRAG_ICON}`}></i>
 					<div className="identifier" />
 					{isEditing ? (
 						<input
@@ -78,30 +112,33 @@ const Column = ({ column }) => {
 					)}
 				</div>
 			</header>
-			<div className="cards-container">
-				{cardsData?.map((card) => (
-					<Card key={card._id} card={card} />
-				))}
+			<div className="cards-container" ref={cardListRef} data-columnid={columnId}>
+				{orderedCards?.map((card) => {
+					if (!card) return null;
+					return (
+						<div key={card._id} data-label={card?._id}>
+							<Card card={card} />
+						</div>
+					);
+				})}
 			</div>
 			<div className="add-card-container" onClick={handleShowModalCreateCard}>
 				<i className={ADD_ICON}></i>
 				<p>Add card</p>
 			</div>
-			<FormCard
-				isOpen={showModalCreateCard}
-				onClose={() => setShowModalCreateCard(!showModalCreateCard)}
-				columnId={column._id}
-			/>
+			{showModalCreateCard && (
+				<FormCard
+					isOpen={showModalCreateCard}
+					onClose={() => setShowModalCreateCard(!showModalCreateCard)}
+					columnId={columnId}
+				/>
+			)}
 		</section>
 	);
 };
 
 Column.propTypes = {
-	column: PropTypes.shape({
-		_id: PropTypes.string.isRequired,
-		title: PropTypes.string.isRequired,
-		position: PropTypes.number,
-	}),
+	columnId: PropTypes.string.isRequired,
 };
 
 export default Column;

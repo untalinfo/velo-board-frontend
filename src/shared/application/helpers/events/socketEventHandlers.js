@@ -1,3 +1,4 @@
+import { updateColumn } from '../../../../domains/boardDomain/application/slices/columns';
 import { addNotification } from '../../slices/notifications';
 
 export const handleAnyEvent = (eventName, eventData, dispatch) => {
@@ -16,6 +17,7 @@ export const handleAnyEvent = (eventName, eventData, dispatch) => {
 			break;
 		case 'column:updated':
 			message = `Column updated: ${eventData?.title || '(no name)'}`;
+			dispatch(updateColumn(eventData));
 			break;
 		case 'card:updated':
 			message = `Card updated: ${eventData?.title || '(no name)'}`;

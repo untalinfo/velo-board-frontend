@@ -17,7 +17,7 @@ const FormCard = ({ isEdit = false, defaultValues = {}, isOpen, onClose, columnI
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isDirty },
+		formState: { errors, isDirty, isValid },
 	} = useForm({ defaultValues: defaultFormValues, mode: 'onChange' });
 
 	const onSubmit = (data) => {
@@ -81,7 +81,7 @@ const FormCard = ({ isEdit = false, defaultValues = {}, isOpen, onClose, columnI
 					{errors.tags && <span className="error">{errors.tags.message}</span>}
 				</div>
 
-				<button type="submit" className="btn-save" disabled={!isDirty}>
+				<button type="submit" className="btn-save" disabled={!isDirty || !isValid}>
 					{isEdit ? 'Edit' : 'Save'}
 				</button>
 			</form>

@@ -44,13 +44,15 @@ const Card = ({ card }) => {
 				<i className={`${PENCIL_ICON} icon`} onClick={handleShowModalEdit}></i>
 				<i className={`${TRASH_ICON} icon`} onClick={handleDeleteCard}></i>
 			</footer>
-			<FormCard
-				isOpen={showModalEdit}
-				onClose={handleShowModalEdit}
-				defaultValues={defaultValues}
-				isEdit={true}
-				cardId={card?._id}
-			/>
+			{showModalEdit && (
+				<FormCard
+					isOpen={showModalEdit}
+					onClose={handleShowModalEdit}
+					defaultValues={defaultValues}
+					isEdit={true}
+					cardId={card?._id}
+				/>
+			)}
 		</section>
 	);
 };
