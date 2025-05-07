@@ -10,7 +10,7 @@
 	width: 100%;
 	position: fixed;
 	top: 0;
-	z-index: 10;
+	z-index: 10000;
 
 	&.scrolled {
 		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
