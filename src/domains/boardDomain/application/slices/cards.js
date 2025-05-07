@@ -118,33 +118,32 @@ const Cards = createSlice({
 		},
 		[putMoveCard.fulfilled]: (state, { payload }) => {
 			state.response = payload;
-			// Encontrar la tarjeta actualizada en el array
-			const cardIndex = state.cardsArray.findIndex((card) => card._id === payload._id);
-			if (cardIndex !== -1) {
-				// Eliminar la tarjeta del array
-				const [movedCard] = state.cardsArray.splice(cardIndex, 1);
+			const movedCardId = payload._id;
+			const newColumnId = payload.columnId;
+			const newPosition = payload.position;
 
-				// Actualizar la posición y columna de la tarjeta
-				movedCard.position = payload.position;
-				movedCard.columnId = payload.columnId;
+			// Eliminar la tarjeta original
+			const cardIndex = state.cardsArray.findIndex((card) => card._id === movedCardId);
+			if (cardIndex === -1) return;
 
-				// Insertar la tarjeta en su nueva posición dentro de la columna correspondiente
-				const targetIndex = state.cardsArray.findIndex(
-					(card) => card.columnId === payload.columnId && card.position >= payload.position,
-				);
-				if (targetIndex === -1) {
-					// Si no hay tarjetas con una posición mayor o igual, agregar al final
-					state.cardsArray.push(movedCard);
-				} else {
-					// Insertar en la posición correcta
-					state.cardsArray.splice(targetIndex, 0, movedCard);
-				}
-				// Reordenar las posiciones de las tarjetas dentro de la columna
-				const columnCards = state.cardsArray.filter((card) => card.columnId === payload.columnId);
-				columnCards.forEach((card, index) => {
-					card.position = index;
-				});
-			}
+			const movedCard = { ...state.cardsArray[cardIndex], ...payload };
+			state.cardsArray.splice(cardIndex, 1); // quita del array global
+
+			// Filtrar las tarjetas de la columna destino
+			const cardsInTargetColumn = state.cardsArray
+				.filter((card) => card.columnId === newColumnId)
+				.sort((a, b) => a.position - b.position);
+
+			// Insertar la tarjeta movida en la posición deseada
+			cardsInTargetColumn.splice(newPosition, 0, movedCard);
+
+			// Recalcular posición de todas las tarjetas en la columna destino
+			cardsInTargetColumn.forEach((card, index) => {
+				card.position = index;
+			});
+
+			// Actualizar el array global: eliminar todas las tarjetas de la columna destino y reemplazarlas por las nuevas
+			state.cardsArray = [...state.cardsArray.filter((card) => card.columnId !== newColumnId), ...cardsInTargetColumn];
 		},
 	},
 });
