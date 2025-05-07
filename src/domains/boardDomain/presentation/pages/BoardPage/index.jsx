@@ -13,8 +13,9 @@ import { ADD_ICON } from '../../../../../shared/application/constants/icons';
 const BoardPage = () => {
 	const dispatch = useDispatch();
 	const boardData = useSelector(getBoardSelector);
-	const columnsData = useSelector(getColumnsByBoardSelector) || [];
-	const columnsDataIds = columnsData.map((column) => column._id);
+	const columnsFromSelector = useSelector(getColumnsByBoardSelector);
+	const columnAux = React.useMemo(() => columnsFromSelector || [], [columnsFromSelector]);
+	const columnsData = React.useMemo(() => columnAux, [columnAux]);
 
 	// --- Drag and Drop Setup ---
 	const handleColumnDragEnd = (payload) => {
@@ -25,7 +26,7 @@ const BoardPage = () => {
 			console.log('No changes in column order.');
 			return;
 		}
-		// Aquí puedes manejar el cambio de orden de las columnas
+		// Manejar el cambio de orden de las columnas
 		const findColumn = columnsData.find((col) => col.position === initialIndex);
 		if (findColumn) {
 			dispatch(
@@ -38,28 +39,29 @@ const BoardPage = () => {
 		}
 	};
 
-	const [parentRef, orderedColumns, setOrderedColumns] = useDragAndDrop([], {
-		group: 'columnsGroup',
+	const [columnContainerRef, columnsDrag, setColumns] = useDragAndDrop(columnsData, {
+		group: 'boardColumnsGroup',
 		handleEnd: handleColumnDragEnd,
 		dragHandle: '.kanban-handle',
 	});
 	// --- Fin Drag and Drop Setup ---
 
 	useEffect(() => {
-		if (columnsDataIds?.length > 0 && JSON.stringify(orderedColumns) !== JSON.stringify(columnsDataIds)) {
-			setOrderedColumns(columnsDataIds);
+		if (columnsData && JSON.stringify(columnsDrag) !== JSON.stringify(columnsData)) {
+			setColumns(columnsData);
 		}
-	}, [columnsDataIds, orderedColumns, setOrderedColumns]);
+	}, [columnsData, columnsDrag, setColumns]);
 
 	useEffect(() => {
 		dispatch(getBoard());
+	}, [dispatch]);
+
+	useEffect(() => {
 		if (boardData?._id) {
-			dispatch(getColumnsByBoard(boardData?._id));
+			dispatch(getColumnsByBoard(boardData._id));
+			dispatch(getCardsByBoard(boardData._id));
 		}
-		if (boardData?._id) {
-			dispatch(getCardsByBoard(boardData?._id));
-		}
-	}, [dispatch, boardData._id]);
+	}, [dispatch, boardData?._id]);
 
 	const handleNewList = () => {
 		const newColumn = {
@@ -80,13 +82,12 @@ const BoardPage = () => {
 			</header>
 
 			<section className="columns-container">
-				<div className="column-wrapper" ref={parentRef}>
-					{orderedColumns.map((columnId) => {
-						const column = columnsData.find((col) => col._id === columnId);
+				<div className="column-wrapper" ref={columnContainerRef}>
+					{columnsDrag.map((column) => {
 						if (!column) return null;
 						return (
 							<div key={column?._id} className="column-draggable" data-label={column?._id}>
-								<Column column={column} />
+								<Column columnId={column?._id} />
 							</div>
 						);
 					})}

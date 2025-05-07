@@ -16,29 +16,32 @@ import { deleteColumn } from '../../../application/slices/columns';
 import { putUpdateColumnRequest } from '../../../infrastructure/api';
 import FormCard from '../FormCard';
 import { putMoveCard } from '../../../application/slices/cards';
+import { getColumnByIdSelector } from '../../../application/selectors/columns';
 
-const Column = ({ column }) => {
+const Column = ({ columnId }) => {
 	const dispatch = useDispatch();
-	const cardsData = useSelector(getCardsByColumnSelector(column?._id));
+	const column = useSelector(getColumnByIdSelector(columnId));
+	const cardsFromSelector = useSelector(getCardsByColumnSelector(columnId));
+	const cards = React.useMemo(() => cardsFromSelector || [], [cardsFromSelector]);
+	const cardsData = React.useMemo(() => cards, [cards]);
 	const [showOptionsColumn, setshowOptionsColumn] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
-	const [name, setName] = useState(`${column.title}`);
+	const [name, setName] = useState(`${column?.title}`);
 	const [showModalCreateCard, setShowModalCreateCard] = useState(false);
-	const cardsDataIds = cardsData.map((card) => card._id);
 
 	const handleShowOptions = () => {
 		setshowOptionsColumn(!showOptionsColumn);
 	};
 
 	const handleDeleteColumn = () => {
-		dispatch(deleteColumn(column?._id));
+		dispatch(deleteColumn(columnId));
 		setshowOptionsColumn(false);
 	};
 
 	const handleNameChange = async () => {
 		setIsEditing(false);
 		const data = { title: name };
-		await putUpdateColumnRequest(column?._id, data);
+		await putUpdateColumnRequest(columnId, data);
 	};
 
 	const handleShowModalCreateCard = () => {
@@ -53,26 +56,25 @@ const Column = ({ column }) => {
 			console.log('No changes in card order.');
 			return;
 		}
-		// Aquí puedes manejar el cambio de orden de las tarjetas
+		// Manejar el cambio de orden de las tarjetas
 		const findCard = cardsData.find((card) => card.position === initialIndex);
-		console.log('findCard', findCard);
 		const formattedData = {
 			newPosition: targetIndex,
-			targetColumnId: column?._id,
+			targetColumnId: columnId,
 		};
 		dispatch(putMoveCard({ formattedData, cardId: findCard?._id }));
 	};
 
-	const [parentRef, orderedCards, setOrderedCards] = useDragAndDrop([], {
-		group: 'cardsGroup',
+	const [cardListRef, orderedCards, setOrderedCards] = useDragAndDrop(cardsData, {
+		group: 'sharedCardsGroup',
 		handleEnd: handleCardDragEnd,
 	});
 	// --- Fin Drag and Drop Setup ---
 	useEffect(() => {
-		if (cardsDataIds?.length > 0 && JSON.stringify(orderedCards) !== JSON.stringify(cardsDataIds)) {
-			setOrderedCards(cardsDataIds);
+		if (cardsData && JSON.stringify(orderedCards) !== JSON.stringify(cardsData)) {
+			setOrderedCards(cardsData);
 		}
-	}, [cardsDataIds, orderedCards, setOrderedCards]);
+	}, [cardsData, orderedCards, setOrderedCards]);
 
 	return (
 		<section className="container-column">
@@ -110,13 +112,12 @@ const Column = ({ column }) => {
 					)}
 				</div>
 			</header>
-			<div className="cards-container" ref={parentRef}>
+			<div className="cards-container" ref={cardListRef} data-columnid={columnId}>
 				{orderedCards?.map((card) => {
-					const cardData = cardsData.find((c) => c._id === card);
-					if (!cardData) return null;
+					if (!card) return null;
 					return (
-						<div key={cardData._id} data-label={cardData?._id}>
-							<Card card={cardData} />
+						<div key={card._id} data-label={card?._id}>
+							<Card card={card} />
 						</div>
 					);
 				})}
@@ -128,18 +129,14 @@ const Column = ({ column }) => {
 			<FormCard
 				isOpen={showModalCreateCard}
 				onClose={() => setShowModalCreateCard(!showModalCreateCard)}
-				columnId={column._id}
+				columnId={columnId}
 			/>
 		</section>
 	);
 };
 
 Column.propTypes = {
-	column: PropTypes.shape({
-		_id: PropTypes.string.isRequired,
-		title: PropTypes.string.isRequired,
-		position: PropTypes.number,
-	}),
+	columnId: PropTypes.string.isRequired,
 };
 
 export default Column;
