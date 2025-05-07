@@ -51,6 +51,14 @@ export const putMoveColumn = createAsyncThunk('columns/moveColumn', async (data,
 const Columns = createSlice({
 	name: 'columns',
 	initialState,
+	reducers: {
+		updateColumn: (state, { payload }) => {
+			const index = state.columnsArray.findIndex((col) => col._id === payload._id);
+			if (index !== -1) {
+				state.columnsArray[index] = payload;
+			}
+		},
+	},
 	extraReducers: {
 		[getColumnsByBoard.pending]: (state) => {
 			state.error = null;
@@ -90,20 +98,31 @@ const Columns = createSlice({
 		[putMoveColumn.fulfilled]: (state, { payload }) => {
 			state.response = payload;
 
-			// Actualizar la posición de la columna en el array
-			const updatedColumnIndex = state.columnsArray.findIndex((column) => column._id === payload._id);
-			if (updatedColumnIndex !== -1) {
-				// Eliminar la columna del array
-				const [updatedColumn] = state.columnsArray.splice(updatedColumnIndex, 1);
+			const updatedCard = payload;
+			const { _id, columnId, position: newPosition } = updatedCard;
 
-				// Insertar la columna en su nueva posición
-				state.columnsArray.splice(payload.position, 0, updatedColumn);
+			// 1. Filtrar tarjetas que están en la misma columna
+			let sameColumnCards = state.columnsArray.filter((card) => card.columnId === columnId);
 
-				// Actualizar la posición de la columna
-				updatedColumn.position = payload.position;
-			}
+			// 2. Remover la tarjeta antigua de la columna
+			sameColumnCards = sameColumnCards.filter((card) => card._id !== _id);
+
+			// 3. Insertar la tarjeta actualizada en su nueva posición
+			sameColumnCards.splice(newPosition, 0, updatedCard);
+
+			// 4. Reasignar posiciones para mantener el orden
+			sameColumnCards = sameColumnCards.map((card, idx) => ({
+				...card,
+				position: idx,
+			}));
+
+			// 5. Reconstruir el estado completo: otras columnas + columna actualizada
+			const otherColumns = state.columnsArray.filter((card) => card.columnId !== columnId);
+			state.columnsArray = [...otherColumns, ...sameColumnCards];
 		},
 	},
 });
+
+export const { updateColumn } = Columns.actions;
 
 export default Columns.reducer;
