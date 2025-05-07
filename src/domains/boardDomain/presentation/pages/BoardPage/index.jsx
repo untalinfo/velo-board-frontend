@@ -70,10 +70,6 @@ const BoardPage = () => {
 		dispatch(postCreateColumn(newColumn));
 	};
 
-	if (!columnsData || columnsData.length === 0) {
-		return <p>Loading columns...</p>;
-	}
-
 	return (
 		<main className="container-board">
 			<header className="header-board">
@@ -82,16 +78,21 @@ const BoardPage = () => {
 			</header>
 
 			<section className="columns-container">
-				<div className="column-wrapper" ref={columnContainerRef}>
-					{columnsDrag.map((column) => {
-						if (!column) return null;
-						return (
-							<div key={column?._id} className="column-draggable" data-label={column?._id}>
-								<Column columnId={column?._id} />
-							</div>
-						);
-					})}
-				</div>
+				{!columnsData || columnsData.length === 0 ? (
+					<></>
+				) : (
+					<div className="column-wrapper" ref={columnContainerRef}>
+						{columnsDrag.map((column) => {
+							if (!column) return null;
+							return (
+								<div key={column?._id} className="column-draggable" data-label={column?._id}>
+									<Column columnId={column?._id} />
+								</div>
+							);
+						})}
+					</div>
+				)}
+
 				<div className="add-new-list-contianer" onClick={handleNewList}>
 					<i className={ADD_ICON}></i>
 					<p>Add new list</p>
